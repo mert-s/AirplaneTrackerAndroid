@@ -13,7 +13,7 @@ import openskyapi.java.src.main.java.org.opensky.model.StateVector;
 public class AirTrackerModel {
     OpenSkyStates s;
     double userLat, userLon;
-    private double distanceSetting = 0.1;
+    private double distanceSetting = 0.5;
 
 
     AirTrackerModel(double userLat, double userLon) throws IOException {
