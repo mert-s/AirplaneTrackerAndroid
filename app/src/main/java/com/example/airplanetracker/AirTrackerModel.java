@@ -1,4 +1,6 @@
 package com.example.airplanetracker;
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +19,8 @@ public class AirTrackerModel {
 
 
     AirTrackerModel(double userLat, double userLon) throws IOException {
+        this.userLat = userLat;
+        this.userLon = userLon;
         OpenSkyApi api = new OpenSkyApi();
         s = api.getStates(0, null,
                 new OpenSkyApi.BoundingBox(userLat - distanceSetting, userLat + distanceSetting, userLon - distanceSetting, userLon + distanceSetting));
@@ -29,17 +33,24 @@ public class AirTrackerModel {
 
     private int calcAngle(double planeLat, double planeLon){
         double ang = Math.atan2(planeLon - userLon, planeLat - userLat);
+
+        Log.d("", "calcAngle: " + planeLon + ", " + userLon +", " + planeLat + ", " + userLat);
         ang = Math.toDegrees(ang);
 
         if(ang < 0){
             ang += 360;
         }
 
+        Log.d("", "calcAngle: " + ang);
         return (int)ang;
     }
 
     public String printTest(){
         return "" + s.getStates().size();
+    }
+
+    public double getDistanceSetting(){
+        return distanceSetting;
     }
 
 
@@ -50,12 +61,18 @@ public class AirTrackerModel {
 
         ArrayList<StateVector> list = new ArrayList<StateVector>();
 
+
+        StateVector state = null;
+        int angle = 0;
+
         while(iterator.hasNext()){
-            StateVector state = iterator.next();
-            if(Math.abs(calcAngle(state.getLatitude(), state.getLongitude()) - bearing) < 30){
+            state = iterator.next();
+            angle = calcAngle(state.getLatitude(), state.getLongitude());
+            if(Math.abs(angle - bearing) < 30){
                 list.add(state);
             }
         }
+
 
         return list;
     }

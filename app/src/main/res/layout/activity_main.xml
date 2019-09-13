@@ -19,11 +19,51 @@
             android:text="Hello World!"
             android:id="@+id/text1x"/>
 
-        <Button
-            android:id="@+id/button"
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CHECK BEARING" />
+            android:text="Hello World2"
+            android:id="@+id/text2x"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World3"
+            android:id="@+id/text3x"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CHECK BEARING" />
+
+        </LinearLayout>
+
+        <!--<LinearLayout
+            android:id="@+id/linearlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">-->
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/linearlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"/>
+            </ScrollView>
+       <!-- </LinearLayout>-->
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
