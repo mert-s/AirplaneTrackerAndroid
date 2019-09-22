@@ -31,7 +31,7 @@ public class AirTrackerModel {
         return s.getStates();
     }
 
-    private int calcAngle(double planeLat, double planeLon){
+    public int calcAngle(double planeLat, double planeLon){
         double ang = Math.atan2(planeLon - userLon, planeLat - userLat);
 
         Log.d("", "calcAngle: " + planeLon + ", " + userLon +", " + planeLat + ", " + userLat);

@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Location userLocation;
     private LinearLayout layout;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
 
-        /*AsyncTask trackerModel = */new AccessInternetTask().execute(new Pair(userLocation.getLatitude(), userLocation.getLongitude())); //user latitude and longitude
+        /*AsyncTask trackerModel = */ //new AccessInternetTask().execute(new Pair(userLocation.getLatitude(), userLocation.getLongitude())); //user latitude and longitude
 
 
         Button button = findViewById(R.id.button);
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     ArrayList<StateVector> planes = airModel.getPlanesNearBearing(azimuth);
                     layout.removeAllViews();
                     for(int i = 0; i < planes.size(); i++){
-                        createText(planes.get(i).getCallsign());
+                        createText(planes.get(i));
                     }
                     if(planes.size()>0){
                         t1.setText("Number of airplanes near the bearing: " + azimuth + " is " + planes.size() + "-- includes: " + planes.get(0).getCallsign());
@@ -114,10 +116,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //new SensorActivity();
     }
 
-    public void createText(String text){
-        TextView x = new TextView(this);
-        x.setText(text);
-        layout.addView(x);
+    public void createText(StateVector plane){
+        TextView callsignV = new TextView(this);
+        callsignV.setText("Callsign: " + plane.getCallsign());
+        TextView airlineV = new TextView(this);
+        airlineV.setText("Airline: " + Airline.CallsignToAirline(plane.getCallsign()));
+        TextView countryV = new TextView(this);
+        countryV.setText("Registered country: " + plane.getOriginCountry());
+        TextView icao24V = new TextView(this);
+        icao24V.setText("ICAO24: " + plane.getIcao24());
+        TextView angleV = new TextView(this);
+        angleV.setText("Current relative bearing: " + airModel.calcAngle(plane.getLatitude(), plane.getLongitude()));
+
+        layout.addView(callsignV);
+        layout.addView(airlineV);
+        layout.addView(countryV);
+        layout.addView(icao24V);
+
+        View v = new View(this);
+        v.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2));
+        v.setBackgroundColor(Color.parseColor("#000000"));
+        layout.addView(v);
     }
 
     public void refreshData(){
@@ -204,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 noSensorAlert();
             }else{
                 mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+                mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
 
                 haveSensor = mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
@@ -258,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     class AccessInternetTask extends AsyncTask<Pair<Double, Double>, Void, AirTrackerModel>{
 
         private AirTrackerModel t;
+        private boolean finished = false;
 
         @Override
         protected AirTrackerModel doInBackground(Pair<Double, Double>... pairs) {
@@ -277,7 +297,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         protected void onPostExecute(AirTrackerModel t){
             t = this.t;
+            finished = true;
             postexec(t);
+        }
+
+        public boolean isFinished(){
+            return finished;
         }
     }
 
